@@ -7,7 +7,7 @@ import 'package:scanify/app/widgets/loading_pro.dart';
 
 
 enum ImageType { file, asset, network }
-class MyNetworkImage extends StatelessWidget {
+class MyNetworkImage extends StatefulWidget {
   final String? imageUrl;
   final String errorImageUrl;
   final double? height;
@@ -33,40 +33,61 @@ class MyNetworkImage extends StatelessWidget {
   });
 
   @override
+  State<MyNetworkImage> createState() => _MyNetworkImageState();
+}
+
+class _MyNetworkImageState extends State<MyNetworkImage> {
+  ImageType imageType = ImageType.network;
+  String? imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+     if(widget.imageUrl == null || widget.imageUrl!.isEmpty) {
+      imageType = ImageType.asset;
+      imageUrl = widget.errorImageUrl;
+    }else {
+      imageType = widget.imageType;
+      imageUrl = widget.imageUrl;
+    }
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return  Opacity(
-      opacity: opacity ?? 1,
+      opacity: widget.opacity ?? 1,
       child: ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.circular(radius.r),
+        borderRadius: widget.borderRadius ?? BorderRadius.circular(widget.radius.r),
         child: imageType != ImageType.network ? SizedBox(
-          height: height?.h,
-          width: width?.w,
+          height: widget.height?.h,
+          width: widget.width?.w,
           child: imageType == ImageType.file ? Image.file(
-            File(imageUrl??errorImageUrl),
-            height: height?.h,
-            width: width?.w,
-            fit: fit,
+            File(imageUrl??widget.errorImageUrl),
+            height: widget.height?.h,
+            width: widget.width?.w,
+            fit: widget.fit,
           )  :  Image.asset(
-              imageUrl ?? errorImageUrl,
-              height: height?.h,
-              width: width?.w,
-              fit: fit,
+              imageUrl ?? widget.errorImageUrl,
+              height: widget.height?.h,
+              width: widget.width?.w,
+              fit: widget.fit,
             ),
           ) : CachedNetworkImage(
-            imageUrl: imageUrl ?? errorImageUrl,
+            imageUrl:imageUrl ?? widget.errorImageUrl,
             imageBuilder: (context, imageProvider) => Container(
-              height: height?.h,
-              width: width?.w,
+              height: widget.height?.h,
+              width: widget.width?.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: imageProvider,
-                  fit: fit,
+                  fit: widget.fit,
                 ),
               ),
             ),
             placeholder: (context, url) => SizedBox(
-              height: height?.h,
-              width: width?.h,
+              height: widget.height?.h,
+              width: widget.width?.h,
               child: Center(
                 child: LoadingPro(
                   size: 20,
@@ -75,14 +96,14 @@ class MyNetworkImage extends StatelessWidget {
                 ),
               ),
             ),
-            errorWidget: (context, url, error) => errorWidget ?? SizedBox(
-              height: height?.h,
-              width: width?.w,
+            errorWidget: (context, url, error) => widget.errorWidget ?? SizedBox(
+              height: widget.height?.h,
+              width: widget.width?.w,
               child: Image.asset( 
-                errorImageUrl,
-                fit: fit ?? BoxFit.cover,
-                height: height?.h,
-                width: width?.w,
+                widget.errorImageUrl,
+                fit: widget.fit ?? BoxFit.cover,
+                height: widget.height?.h,
+                width: widget.width?.w,
               ),
             ),
         ),

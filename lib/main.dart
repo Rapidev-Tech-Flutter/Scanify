@@ -6,6 +6,7 @@ import 'package:scanify/app/static/constants.dart';
 
 import 'app/routes/app_pages.dart';
 
+
 void main() {
   runApp(MyApp());
 }
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(390, 812),
+      designSize: const Size(393, 852),
       builder: (context, child) {
         return GetMaterialApp(
           title: "Scanify",
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
               foregroundColor: Clr.white,
               iconTheme: IconThemeData(color: Clr.white),
             ),
+            fontFamily: 'Poppins',
             primaryColor: Clr.primary,
             scaffoldBackgroundColor: Clr.white,
             colorScheme: Theme.of(context).colorScheme.copyWith(primary: Clr.primary),

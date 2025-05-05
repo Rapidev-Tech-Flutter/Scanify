@@ -42,7 +42,7 @@ class _SplashViewState extends State<SplashView>{
               alignment: Alignment.center,
               children: [
                 MyNetworkImage(
-                  imageUrl: 'assets/images/app_logo.png',
+                  imageUrl: AssetPath.splashLogo,
                   imageType: ImageType.asset,
                   height: 48,
                   width: 177,
