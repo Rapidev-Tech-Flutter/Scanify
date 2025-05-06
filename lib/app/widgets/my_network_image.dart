@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scanify/app/widgets/loading_pro.dart';
 
 
-enum ImageType { file, asset, network }
+enum ImageType { file, asset, network, memory }
 class MyNetworkImage extends StatefulWidget {
   final String? imageUrl;
+  final Uint8List? imageBtyes;
   final String errorImageUrl;
   final double? height;
   final double? width;
@@ -21,6 +23,7 @@ class MyNetworkImage extends StatefulWidget {
   const MyNetworkImage({
     super.key, 
     this.imageUrl, 
+    this.imageBtyes,
     this.height, 
     this.width,
     this.radius = 0, 
@@ -43,7 +46,11 @@ class _MyNetworkImageState extends State<MyNetworkImage> {
   @override
   void initState() {
     super.initState();
-     if(widget.imageUrl == null || widget.imageUrl!.isEmpty) {
+    if(widget.imageType == ImageType.memory){
+      imageType = widget.imageType;
+      return;
+    }
+    if(widget.imageUrl == null || widget.imageUrl!.isEmpty) {
       imageType = ImageType.asset;
       imageUrl = widget.errorImageUrl;
     }else {
@@ -62,7 +69,9 @@ class _MyNetworkImageState extends State<MyNetworkImage> {
         child: imageType != ImageType.network ? SizedBox(
           height: widget.height?.h,
           width: widget.width?.w,
-          child: imageType == ImageType.file ? Image.file(
+          child: imageType == ImageType.memory && widget.imageBtyes != null ? Image.memory(
+            widget.imageBtyes!,
+          ) : imageType == ImageType.file ? Image.file(
             File(imageUrl??widget.errorImageUrl),
             height: widget.height?.h,
             width: widget.width?.w,

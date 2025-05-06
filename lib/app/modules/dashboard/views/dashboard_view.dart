@@ -29,23 +29,26 @@ class DashboardView extends GetView<DashboardController> {
                   )
                 ),
                 Expanded(
-                  child: Container(
-                    height: 48.h,
-                    width: 48.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(width: 2.19.w,color: Clr.grey.withValues(alpha: .49))
-                    ),
-                    alignment: Alignment.center,
+                  child: GestureDetector(
+                    onTap: controller.scanTap,
                     child: Container(
-                      height: 42.18.h,
-                      width: 42.18.h,
+                      height: 48.h,
+                      width: 48.h,
                       decoration: BoxDecoration(
-                        color: Clr.primary,
                         shape: BoxShape.circle,
+                        border: Border.all(width: 2.19.w,color: Clr.grey.withValues(alpha: .49))
                       ),
                       alignment: Alignment.center,
-                      child: SvgPicture.asset(AssetPath.scanIcon),
+                      child: Container(
+                        height: 42.18.h,
+                        width: 42.18.h,
+                        decoration: BoxDecoration(
+                          color: Clr.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: SvgPicture.asset(AssetPath.scanIcon),
+                      ),
                     ),
                   ),
                 ),

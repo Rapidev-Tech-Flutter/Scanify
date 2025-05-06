@@ -1,13 +1,23 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:scanify/app/data/models/saved_file_item.dart';
+import 'package:scanify/app/routes/app_pages.dart';
 import 'package:scanify/app/static/constants.dart';
 
-import 'app/routes/app_pages.dart';
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Permission.manageExternalStorage.request();
 
+  await Hive.initFlutter();
+  Hive.registerAdapter(SavedFileItemAdapter());
 
-void main() {
+  await Hive.openBox<SavedFileItem>('saved_files');
+
   runApp(MyApp());
 }
 

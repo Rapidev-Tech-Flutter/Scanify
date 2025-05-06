@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:scanify/app/modules/home/views/widgets/pdf_preview_widget.dart';
 import 'package:scanify/app/static/constants.dart';
 import 'package:scanify/app/widgets/input_feild.dart';
 import 'package:scanify/app/widgets/my_network_image.dart';
 import 'package:scanify/app/widgets/submit_button.dart';
+import 'package:intl/intl.dart';
 
 import '../controllers/home_controller.dart';
 
@@ -95,13 +97,14 @@ class HomeView extends GetView<HomeController> {
                 ).paddingOnly(bottom: 8.h),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: 2,
+                    itemCount: controller.savedFiles.length,
                     padding: EdgeInsets.zero,
                     itemBuilder: (context,index) {
+                      final file = controller.savedFiles[index];
                       return FileItemWidget(
                         imageUrl: '', 
-                        title: 'CamScanner...07-09-2024', 
-                        subtitle: '2025-01-20 20:10', 
+                        title: file.fileName, 
+                        subtitle: DateFormat('yyyy-MM-dd HH:mm').format(file.dateSaved), 
                         isChecked: false.obs, 
                         isExpanded: false.obs,
                         onShareTap: controller.onShareTap,
@@ -178,13 +181,7 @@ class FileItemWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              MyNetworkImage(
-                height: 66.86,
-                width: 72,
-                fit: BoxFit.contain,
-                radius: 8,
-                imageUrl: imageUrl,
-              ),
+              PdfPreviewWidget(filePath: imageUrl),
               SizedBox(width: 16.w),
               Expanded(
                 child: Column(
