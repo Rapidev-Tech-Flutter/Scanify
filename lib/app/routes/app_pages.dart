@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/custom_pdf_viewer/bindings/custom_pdf_viewer_binding.dart';
+import '../modules/custom_pdf_viewer/views/custom_pdf_viewer_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -43,6 +45,11 @@ class AppPages {
       name: _Paths.IMPORT_IMAGES,
       page: () => const ImportImagesView(),
       binding: ImportImagesBinding(),
+    ),
+    GetPage(
+      name: _Paths.CUSTOM_PDF_VIEWER,
+      page: () => const CustomPdfViewerView(),
+      binding: CustomPdfViewerBinding(),
     ),
   ];
 }

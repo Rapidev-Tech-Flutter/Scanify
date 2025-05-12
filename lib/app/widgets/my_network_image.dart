@@ -71,6 +71,9 @@ class _MyNetworkImageState extends State<MyNetworkImage> {
           width: widget.width?.w,
           child: imageType == ImageType.memory && widget.imageBtyes != null ? Image.memory(
             widget.imageBtyes!,
+            height: widget.height?.h,
+            width: widget.width?.w,
+            fit: widget.fit,
           ) : imageType == ImageType.file ? Image.file(
             File(imageUrl??widget.errorImageUrl),
             height: widget.height?.h,

@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
-import 'package:scanify/app/modules/home/views/widgets/pdf_preview_widget.dart';
 import 'package:scanify/app/static/constants.dart';
 import 'package:scanify/app/widgets/input_feild.dart';
 import 'package:scanify/app/widgets/my_network_image.dart';
@@ -21,9 +20,10 @@ class HomeView extends GetView<HomeController> {
       builder: (controller) {
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Clr.transparent,
+            backgroundColor: Clr.white,
             elevation: 0,
             shadowColor: Clr.transparent,
+            scrolledUnderElevation: 0,
             title: MyNetworkImage(
               imageUrl: AssetPath.splashLogo,
               imageType: ImageType.asset,
@@ -43,10 +43,10 @@ class HomeView extends GetView<HomeController> {
               ),
               child: Row(
                 children: [
-                  buildIconButton(title: 'OCR',icon: AssetPath.ocrIcon),
-                  buildIconButton(title: 'ID Scan',icon: AssetPath.idScanIcon),
-                  buildIconButton(title: 'Single Scan',icon: AssetPath.sScanIcon),
-                  buildIconButton(title: 'Batch Mode',icon: AssetPath.batchIcon),
+                  buildIconButton(title: 'OCR',icon: AssetPath.ocrIcon,onTap: controller.onOcrTap),
+                  buildIconButton(title: 'ID Scan',icon: AssetPath.idScanIcon,onTap: controller.onIdScanTap),
+                  buildIconButton(title: 'Single Scan',icon: AssetPath.sScanIcon,onTap: controller.onsScanTap),
+                  buildIconButton(title: 'Batch Mode',icon: AssetPath.batchIcon,onTap: controller.onBatchTap),
                 ],
               ),
             ),
@@ -181,7 +181,13 @@ class FileItemWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              PdfPreviewWidget(filePath: imageUrl),
+               MyNetworkImage(
+                height: 66.86,
+                width: 72,
+                fit: BoxFit.contain,
+                radius: 8,
+                imageUrl: imageUrl,
+              ),
               SizedBox(width: 16.w),
               Expanded(
                 child: Column(
