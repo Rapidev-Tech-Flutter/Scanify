@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +8,11 @@ import 'package:scanify/app/data/models/saved_file_item.dart';
 class HomeController extends GetxController {
 
   List<SavedFileItem> savedFiles = [];
+
+  final searchController = TextEditingController();
+
+  bool isLoading = true;
+
   @override
   onInit() {
     super.onInit();
@@ -17,6 +21,7 @@ class HomeController extends GetxController {
 
   getList() async {
     savedFiles = await HiveDatabase.getAllSavedFiles();
+    isLoading = false;
     update();
   }
 
@@ -50,7 +55,6 @@ class HomeController extends GetxController {
       debugPrint('result: $result');
       
       if(result != null && result.pdf != null) {
-        log('here ====> ');
         final pdf = result.pdf!;
         final file = await HiveDatabase.saveFileToScanifyFolder(sourcePath: pdf.uri);
         if(file != null)  {
@@ -76,5 +80,14 @@ class HomeController extends GetxController {
   }
 
   onOcrTap() {
+  }
+
+  void onRefreshTap() async {
+    isLoading = true;
+    update();
+
+    savedFiles = await HiveDatabase.syncScanifyFolderToHive();
+    isLoading = false;
+    update();
   }
 }

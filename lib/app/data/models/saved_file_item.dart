@@ -1,3 +1,4 @@
+import 'package:get/state_manager.dart';
 import 'package:hive/hive.dart';
 
 part 'saved_file_item.g.dart';
@@ -16,11 +17,19 @@ class SavedFileItem extends HiveObject {
 
   @HiveField(3)
   final DateTime dateSaved;
+  
+  @HiveField(4)
+  bool isRemoved; 
+
+  Rx<bool> isChecked = false.obs;
+  Rx<bool> isExpanded = false.obs;
+
 
   SavedFileItem({
     required this.id,
     required this.fileName,
     required this.filePath,
     required this.dateSaved,
+    this.isRemoved = false,
   });
 }

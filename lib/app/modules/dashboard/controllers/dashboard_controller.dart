@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -51,9 +50,7 @@ class DashboardController extends GetxController {
         ),
       );
       result = await _documentScanner?.scanDocument();
-      debugPrint('result: $result');
       if(result != null && result!.pdf != null) {
-        log('here ====> ');
         final pdf = result!.pdf!;
         final file = await HiveDatabase.saveFileToScanifyFolder(sourcePath: pdf.uri);
         if(file != null) {

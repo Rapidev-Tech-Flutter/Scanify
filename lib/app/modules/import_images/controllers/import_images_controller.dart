@@ -52,7 +52,7 @@ class ImportImagesController extends GetxController {
     } else {
       buildCustomDialog(
         title: 'Permission Required'.tr,
-        desc: 'Please allow \"Photos\" access.'.tr,
+        desc: 'Please allow "Photos" access.'.tr,
         okayBtnText: 'Go to Setting',
         barrierDismissible: false,
         isEqualFlex: false,

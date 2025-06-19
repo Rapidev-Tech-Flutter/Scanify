@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:scanify/app/data/models/saved_file_item.dart';
 import 'package:scanify/app/static/constants.dart';
 import 'package:scanify/app/widgets/input_feild.dart';
 import 'package:scanify/app/widgets/my_network_image.dart';
@@ -61,14 +62,17 @@ class HomeView extends GetView<HomeController> {
                       child: InputField(
                         prefixIconData: Icons.search,
                         hintText: 'Search your file', 
-                        inputController: TextEditingController(),
+                        inputController: controller.searchController,
+                        onChanged: (p0) => controller.update(),
                       ),
                     ),
                     SizedBox(width: 46.w),
                     SvgPicture.asset(AssetPath.addFileIcon),
                     SizedBox(width: 29.w),
-                    SvgPicture.asset(AssetPath.refreshIcon),
-            
+                    GestureDetector(
+                      onTap: controller.onRefreshTap,
+                      child: SvgPicture.asset(AssetPath.refreshIcon),
+                    ),
                   ]
                 ).paddingSymmetric(vertical: 24.h),
                 Row(
@@ -95,30 +99,37 @@ class HomeView extends GetView<HomeController> {
                     )
                   ],
                 ).paddingOnly(bottom: 8.h),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: controller.savedFiles.length,
-                    padding: EdgeInsets.zero,
-                    itemBuilder: (context,index) {
-                      final file = controller.savedFiles[index];
-                      return FileItemWidget(
-                        imageUrl: '', 
-                        title: file.fileName, 
-                        subtitle: DateFormat('yyyy-MM-dd HH:mm').format(file.dateSaved), 
-                        isChecked: false.obs, 
-                        isExpanded: false.obs,
-                        onShareTap: controller.onShareTap,
-                        onToWordTap: controller.onToWordTap,
-                        onViewTap: controller.onViewTap,
-                      );
-                    }, 
-                  )
-                )
+                buildListView(),
               ],
             ),
           ),
         );
       }
+    );
+  }
+
+  buildListView() {
+    final files = controller.searchController.text.isNotEmpty 
+      ? controller.savedFiles.where((file) => file.fileName.toLowerCase().contains(controller.searchController.text.toLowerCase())).toList()
+      : controller.savedFiles;
+    return Expanded(
+      child: controller.isLoading ? loader : files.isEmpty ? Center(
+        child: Text(
+          controller.searchController.text.isNotEmpty  ? 'No search results' : 'No files found',
+        ),
+      ) : ListView.builder(
+        itemCount: files.length,
+        padding: EdgeInsets.zero,
+        itemBuilder: (context,index) {
+          final file = files[index];
+          return FileItemWidget(
+            file: file,
+            onShareTap: controller.onShareTap,
+            onToWordTap: controller.onToWordTap,
+            onViewTap: controller.onViewTap,
+          );
+        }, 
+      )
     );
   }
 
@@ -149,23 +160,15 @@ class HomeView extends GetView<HomeController> {
 }
 
 class FileItemWidget extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String subtitle;
-  final RxBool isChecked;
+  final SavedFileItem file;
   final Function(bool?)? onCheckChanged;
-  final RxBool isExpanded;
   final Function()? onShareTap;
   final Function()? onToWordTap;
   final Function()? onViewTap;
   const FileItemWidget({
     super.key, 
-    required this.imageUrl, 
-    required this.title, 
-    required this.subtitle, 
-    required this.isChecked,
+    required this.file,
     this.onCheckChanged, 
-    required this.isExpanded, 
     this.onShareTap, 
     this.onToWordTap, 
     this.onViewTap
@@ -174,9 +177,7 @@ class FileItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        isExpanded.toggle();
-      },
+      onTap: file.isRemoved ? null : file.isExpanded.toggle,
       child: Column(
         children: [
           Row(
@@ -186,7 +187,7 @@ class FileItemWidget extends StatelessWidget {
                 width: 72,
                 fit: BoxFit.contain,
                 radius: 8,
-                imageUrl: imageUrl,
+                imageUrl: '',
               ),
               SizedBox(width: 16.w),
               Expanded(
@@ -194,28 +195,33 @@ class FileItemWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      file.fileName,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
+                        color: file.isRemoved ? Clr.subtextColor : Clr.textColor,
+                        decoration: file.isRemoved ? TextDecoration.lineThrough : TextDecoration.none, 
                       ),
                     ),
                     Text(
-                      subtitle,
+                      DateFormat('yyyy-MM-dd HH:mm').format(file.dateSaved),
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 12.sp,
                         fontWeight: FontWeight.normal,
-                        color: Clr.subtextColor
+                        color: Clr.subtextColor,
+                        decoration: file.isRemoved ? TextDecoration.lineThrough : TextDecoration.none,
                       ),
                     ),
                   ],
                 )
               ),
               SizedBox(width: 16.w),
-              Obx(() => Checkbox.adaptive(
-                  value: isChecked.value, 
-                  onChanged: onCheckChanged,
+              if(!file.isRemoved) Obx(() => Checkbox.adaptive(
+                  value: file.isChecked.value, 
+                  onChanged: onCheckChanged ?? (value) {
+                    file.isChecked.value = value ?? false;
+                  },
                   side: BorderSide(
                     color: Clr.subtextColor,
                     width: 1.4
@@ -227,7 +233,7 @@ class FileItemWidget extends StatelessWidget {
               )
             ],
           ),
-          Obx(() => !isExpanded() ? SizedBox.shrink() : Column(
+          if(!file.isRemoved) Obx(() => !file.isExpanded() ? SizedBox.shrink() : Column(
               children: [
                 Row(
                   children: [

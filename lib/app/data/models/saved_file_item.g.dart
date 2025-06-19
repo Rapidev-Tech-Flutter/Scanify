@@ -21,13 +21,14 @@ class SavedFileItemAdapter extends TypeAdapter<SavedFileItem> {
       fileName: fields[1] as String,
       filePath: fields[2] as String,
       dateSaved: fields[3] as DateTime,
+      isRemoved: fields[4] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, SavedFileItem obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class SavedFileItemAdapter extends TypeAdapter<SavedFileItem> {
       ..writeByte(2)
       ..write(obj.filePath)
       ..writeByte(3)
-      ..write(obj.dateSaved);
+      ..write(obj.dateSaved)
+      ..writeByte(4)
+      ..write(obj.isRemoved);
   }
 
   @override
