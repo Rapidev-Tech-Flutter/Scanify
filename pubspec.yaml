@@ -31,6 +31,8 @@ dependencies:
   photo_manager: ^3.6.4
   pdf: ^3.11.3
   syncfusion_flutter_pdfviewer: ^29.1.41
+  open_file: ^3.5.10
+  share_plus: ^11.0.0
 
 dev_dependencies:
   flutter_test:

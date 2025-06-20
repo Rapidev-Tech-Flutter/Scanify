@@ -46,7 +46,7 @@ class DashboardController extends GetxController {
           documentFormat: format,
           mode: ScannerMode.full,
           isGalleryImport: false,
-          pageLimit: 10,
+          pageLimit: 1,
         ),
       );
       result = await _documentScanner?.scanDocument();
@@ -56,7 +56,7 @@ class DashboardController extends GetxController {
         if(file != null) {
           if(Get.isRegistered<HomeController>()){
             final HomeController controller = Get.find<HomeController>();
-            controller.savedFiles.add(file);
+            controller.savedFiles.insert(0, file);
             controller.update();
           }
           

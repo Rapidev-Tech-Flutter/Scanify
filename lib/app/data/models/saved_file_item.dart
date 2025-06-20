@@ -23,6 +23,7 @@ class SavedFileItem extends HiveObject {
 
   Rx<bool> isChecked = false.obs;
   Rx<bool> isExpanded = false.obs;
+  Rx<bool> isLoading = false.obs;
 
 
   SavedFileItem({

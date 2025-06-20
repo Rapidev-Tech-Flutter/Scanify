@@ -20,19 +20,27 @@ class HiveDatabase {
 
   static final saveFilesBox = Hive.box<SavedFileItem>('saved_files');
 
-  static Future<void> deleteSavedFileById(String id) async {
-    // Find the item with the matching id
-    final keyToDelete = saveFilesBox.keys.cast<int>().firstWhere(
-      (key) => saveFilesBox.get(key)?.id == id,
-      orElse: () => -1,
-    );
+  // static Future<void> deleteSavedFileById(String id) async {
+  //   // Find the item with the matching id
+  //   final keyToDelete = saveFilesBox.keys.cast<int>().firstWhere(
+  //     (key) => saveFilesBox.get(key)?.id == id,
+  //     orElse: () => -1,
+  //   );
 
-    if (keyToDelete != -1) {
-      await saveFilesBox.delete(keyToDelete);
-      debugPrint("✅ Deleted file with id: $id");
-    } else {
-      debugPrint("❌ No file found with id: $id");
-    }
+  //   if (keyToDelete != -1) {
+  //     await saveFilesBox.delete(keyToDelete);
+  //     debugPrint("✅ Deleted file with id: $id");
+  //   } else {
+  //     debugPrint("❌ No file found with id: $id");
+  //   }
+  // }
+
+  static Future<void> deleteSavedFilesByIds(List<String> ids) async {
+    final keysToDelete = saveFilesBox.keys.cast<int>().where(
+      (key) => ids.contains(saveFilesBox.get(key)?.id),
+    );
+    await saveFilesBox.deleteAll(keysToDelete);
+    debugPrint("✅ Deleted files with ids: $ids");
   }
 
   static Future<void> addSavedFile(SavedFileItem file) async {
@@ -104,7 +112,7 @@ class HiveDatabase {
           id: Uuid().v4(),
           fileName: fileName,
           filePath: file.path,
-          dateSaved: DateTime.now(),
+          dateSaved: await file.lastModified(),
         );
         await saveFilesBox.add(newItem);
       }
@@ -119,7 +127,6 @@ class HiveDatabase {
     String fileExt;
     Uint8List? fileBytes;
     MimeType mimeType = MimeType.other;
-    final id = Uuid().v4();
     if(sourcePath != null){
       final sourceFile = File(sourcePath);
 
@@ -128,12 +135,12 @@ class HiveDatabase {
         return null;
       }
 
-      fileName = 'scanify-document-$id';
+      fileName = 'scanify-document-${DateTime.now().toIso8601String()}';
       fileExt = sourceFile.uri.pathSegments.last.split('.').last;
       mimeType = MimeType.values.firstWhereOrNull((e) => e.type  == (lookupMimeType(sourcePath) ?? 'application/octet-stream')) ?? MimeType.other;
       fileBytes = await sourceFile.readAsBytes();
     } else {
-      fileName = 'Scanify/scanify-document-$id';
+      fileName = 'Scanify/scanify-document-${DateTime.now().toIso8601String()}';
       fileExt = 'pdf';
       mimeType = MimeType.pdf;
       fileBytes = bytes;
@@ -145,6 +152,10 @@ class HiveDatabase {
     String? savedPath;
         
     if (Platform.isAndroid) {
+      final directory = Directory('/storage/emulated/0/Download/Scanify');
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
       // Ask for storage permission
       if (await Permission.manageExternalStorage.request().isGranted || await Permission.storage.request().isGranted) {
         final fileSaver = FileSaver.instance;
@@ -159,9 +170,6 @@ class HiveDatabase {
       } else {
         log("❌ Android storage permission denied");
       }
-
-
-    
     } else if (Platform.isIOS) {
       final directory = await getApplicationDocumentsDirectory();
       savedPath = "${directory.path}/$fileName";
@@ -180,10 +188,10 @@ class HiveDatabase {
         filePath: savedPath, 
         dateSaved: DateTime.now()
       );
-      log("✅ File saved to $savedPath");
+      
       HiveDatabase.addSavedFile(file);
     }
-
+    log("✅ File saved to ${file?.filePath}");
     return file;
   }
 }
