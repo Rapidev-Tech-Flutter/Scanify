@@ -1,12 +1,17 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_document_scanner/google_mlkit_document_scanner.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:scanify/app/data/helpers/hive_database.dart';
 import 'package:scanify/app/data/models/saved_file_item.dart';
 import 'package:scanify/app/modules/home/views/all_scans.dart';
+import 'package:scanify/app/static/constants.dart';
 import 'package:scanify/app/widgets/input_feild.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -135,7 +140,98 @@ class HomeController extends GetxController {
     }
   }
 
-  onOcrTap() {
+  onOcrTap() async {
+    ImageSource? source = await Get.dialog(
+      AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('OCR'),
+            IconButton(onPressed: Get.back, icon: Icon(Icons.close))
+          ],
+        ),
+        backgroundColor: Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                MediaDialogButton(
+                  title: 'Camera',
+                  icon: Icons.camera,
+                  onTap: () async {
+                     Get.back(result: ImageSource.camera);
+                  },
+                ),
+                SizedBox(width: 20.w),
+                MediaDialogButton(
+                  title: 'Gallery',
+                  icon: Icons.image,
+                  onTap: () async {
+                    Get.back(result: ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      barrierDismissible: true,
+    );
+    if(source == null) return;
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if(pickedFile == null) return;
+
+    final path = pickedFile.path;
+    final inputImage = InputImage.fromFilePath(path);
+
+    var textRecognizer = TextRecognizer();
+    final recognizedText = await textRecognizer.processImage(inputImage);
+
+    final ocrText = recognizedText.text;
+    final TextEditingController controller = TextEditingController(
+      text: ocrText,
+    );
+    await Get.dialog(
+      AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('OCR'),
+            IconButton(onPressed: Get.back, icon: Icon(Icons.close))
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              autofocus: true,
+              readOnly: true,
+              
+              maxLines: 10,
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              controller.selection = TextSelection(baseOffset: 0, extentOffset: controller.text.length);
+            },
+            child: Text('Select All'),
+          ),
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: controller.text));
+            },
+            child: Text('Copy'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
   }
 
   onIdScanTap() {
@@ -151,7 +247,13 @@ class HomeController extends GetxController {
   onBatchScanTap() async {
     final pageLimit = await Get.dialog(
       AlertDialog(
-        title: Text('Batch Scan'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Batch Scan'),
+            IconButton(onPressed: Get.back, icon: Icon(Icons.close))
+          ],
+        ),
         backgroundColor: Colors.white,
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -179,4 +281,44 @@ class HomeController extends GetxController {
     }
   }
 
+}
+
+class MediaDialogButton extends StatelessWidget {
+  const MediaDialogButton({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String title;
+  final Function() onTap;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Clr.primary, width: 2.w),
+            borderRadius: BorderRadius.circular(6.r),
+          ),
+          child: IconButton(
+            splashColor: Clr.transparent,
+            focusColor: Clr.transparent,
+            hoverColor: Clr.transparent,
+            highlightColor: Clr.transparent,
+            onPressed: onTap,
+            icon: Icon(
+              icon,
+              color: Clr.primary,
+              size: 25.h,
+            ),
+          ),
+        ),
+        SizedBox(height: 5.h),
+        Text(title.tr, style: TextStyle(color: Clr.primary, fontSize: 16.sp))
+      ],
+    );
+  }
 }
