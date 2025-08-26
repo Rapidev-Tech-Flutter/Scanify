@@ -24,7 +24,7 @@ class ImportImagesView extends GetView<ImportImagesController> {
                 fontWeight: FontWeight.bold
               ),
             ),
-            leading: Icon(Icons.close),
+            // leading: Icon(Icons.close),
             actions: [
               if(controller.assets.isNotEmpty) Obx(() => controller.assets.any((e) => e.isSelected()) ? SubmitButton(
                   title: 'Import (${controller.assets.where((e) => e.isSelected()).length})',
@@ -87,7 +87,7 @@ class ImportImagesView extends GetView<ImportImagesController> {
                               top: 0,
                               child: Obx(() => Checkbox(
                                 visualDensity: VisualDensity.compact,
-                                value: asset.isSelected.value, 
+                                value: asset.isSelected.value,
                                 onChanged: (bool? value) {
                                   asset.isSelected.value = value ?? false;
                                 }

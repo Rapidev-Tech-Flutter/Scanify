@@ -33,7 +33,7 @@ class OnboardingController extends GetxController {
 
   PageController pageController = PageController();
   
-  onNextTap() async {
+  Future<void> onNextTap() async {
     if(currentIndex < (obData.length -1)){
       currentIndex++;
       update();

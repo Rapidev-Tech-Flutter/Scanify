@@ -44,6 +44,8 @@ class OcrTextPage extends StatelessWidget {
 
 
 class SelectAllDialogContent extends StatefulWidget {
+  const SelectAllDialogContent({super.key});
+
   @override
   State<SelectAllDialogContent> createState() => _SelectAllDialogContentState();
 }

@@ -58,7 +58,7 @@ class HomeView extends GetView<HomeController> {
   }
 
 
-  buildIconButton({required String title,required String icon,Function()? onTap}) {
+  Expanded buildIconButton({required String title,required String icon,Function()? onTap}) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,

@@ -16,8 +16,7 @@ class SplashController extends GetxController  {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final onboardingDone = prefs.getBool('onboardingDone') ?? false;
       if(onboardingDone){
-        // TODO: NAVIGATE TO DASHBOARD ONCE DESIGN IS DONE
-        Get.offAndToNamed(Routes.ONBOARDING);
+        Get.offAndToNamed(Routes.DASHBOARD);
       }else {
         Get.offAndToNamed(Routes.ONBOARDING);
       }

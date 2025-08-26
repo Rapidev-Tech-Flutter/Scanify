@@ -6,6 +6,8 @@ import 'detector_view.dart';
 import 'painter/text_detector_painter.dart';
 
 class TextRecognizerView extends StatefulWidget {
+  const TextRecognizerView({super.key});
+
   @override
   State<TextRecognizerView> createState() => _TextRecognizerViewState();
 }

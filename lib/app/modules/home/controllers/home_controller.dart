@@ -29,7 +29,7 @@ class HomeController extends GetxController {
     getList();
   }
 
-  getList() async {
+  Future<void> getList() async {
     savedFiles = await HiveDatabase.getAllSavedFiles();
     savedFiles.sort((a, b) => b.dateSaved.compareTo(a.dateSaved));
     isLoading = false;
@@ -50,7 +50,7 @@ class HomeController extends GetxController {
     update();
   }
 
-   onMultipleDeleteTap() async {
+   Future<void> onMultipleDeleteTap() async {
     final selectedFiles = savedFiles.where((e) => e.isChecked()).toList();
     if(selectedFiles.isEmpty) return;
     isLoading = true;
@@ -61,7 +61,7 @@ class HomeController extends GetxController {
     update();
   }
 
-  onMultipleShareTap() async {
+  Future<void> onMultipleShareTap() async {
     final selectedFiles = savedFiles.where((e) => e.isChecked()).toList();
     if(selectedFiles.isEmpty) return;
     final params = ShareParams(
@@ -79,7 +79,7 @@ class HomeController extends GetxController {
     }
   }
 
-   onSingleShareTap(SavedFileItem p1) async {
+   Future<void> onSingleShareTap(SavedFileItem p1) async {
     final params = ShareParams(
       text: 'Check out this document I scanned using Scanify!',
       files: [XFile(p1.filePath)], 
@@ -91,14 +91,14 @@ class HomeController extends GetxController {
     }
   }
 
-  onToWordTap() {
+  void onToWordTap() {
   }
 
-  onViewTap(SavedFileItem p1) async{
+  Future<void> onViewTap(SavedFileItem p1) async{
     await OpenFile.open(p1.filePath);
   }
 
-  onSingleDeleteTap(SavedFileItem p1) async {
+  Future<void> onSingleDeleteTap(SavedFileItem p1) async {
     p1.isLoading.value = true;
     await HiveDatabase.deleteSavedFilesByIds([p1.id]);
     savedFiles.remove(p1);
@@ -140,7 +140,7 @@ class HomeController extends GetxController {
     }
   }
 
-  onOcrTap() async {
+  Future<void> onOcrTap() async {
     ImageSource? source = await Get.dialog(
       AlertDialog(
         title: Row(
@@ -234,17 +234,17 @@ class HomeController extends GetxController {
     );
   }
 
-  onIdScanTap() {
+  void onIdScanTap() {
     startScan();
   }
 
-  onSingleScanTap() {
+  void onSingleScanTap() {
     startScan(pageLimit: 1);
   }
 
   final batchFieldController = TextEditingController();
   
-  onBatchScanTap() async {
+  Future<void> onBatchScanTap() async {
     final pageLimit = await Get.dialog(
       AlertDialog(
         title: Row(

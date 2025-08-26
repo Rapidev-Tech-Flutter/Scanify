@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart' as pm;
 
 import 'package:scanify/app/routes/app_pages.dart';
+import 'package:scanify/app/static/constants.dart';
 import 'package:scanify/app/static/custom_dailog.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -24,7 +25,7 @@ class ImportImagesController extends GetxController {
     callInit();
   }
 
-  callInit() async{
+  Future<void> callInit() async{
     assets = await requestAssets();
 
     isLoading = false;
@@ -67,7 +68,9 @@ class ImportImagesController extends GetxController {
     }
   }
 
-  onImportTap() async {
+  Future<void> onImportTap() async {
+    Get.snackbar('Import Images', 'Working on it',backgroundColor: Clr.primary);
+    return;
     final selectedPics = assets.where((e) => e.isSelected()).toList();
     
     final pdf = await createPdf(selectedPics.map((e) => e.asset).toList());

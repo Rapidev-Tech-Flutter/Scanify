@@ -56,7 +56,7 @@ class HiveDatabase {
     return saveFilesBox.values.toList();
   }
 
-  static checkFileExists(key) async {
+  static Future<void> checkFileExists(dynamic key) async {
   
     final item = saveFilesBox.get(key);
 
@@ -163,7 +163,7 @@ class HiveDatabase {
         savedPath = await fileSaver.saveAs(
           name: fileName,
           bytes: fileBytes,
-          ext: fileExt,
+          fileExtension: fileExt,
           mimeType: mimeType,
           filePath: 'Scanify',
         );

@@ -3,19 +3,20 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scanify/app/services/text_recognizer/utils.dart';
 
 
 class GalleryView extends StatefulWidget {
-  GalleryView(
-      {Key? key,
+  const GalleryView(
+      {super.key,
       required this.title,
       this.text,
       required this.onImage,
-      required this.onDetectorViewModeChanged})
-      : super(key: key);
+      required this.onDetectorViewModeChanged});
 
   final String title;
   final String? text;
@@ -128,50 +129,46 @@ class _GalleryViewState extends State<GalleryView> {
             key.contains('.webp'))
         .toList();
 
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0)),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Select image',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * 0.7),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          for (final path in assets)
-                            GestureDetector(
-                              onTap: () async {
-                                Navigator.of(context).pop();
-                                _processFile(await getAssetPath(path));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(path),
-                              ),
-                            ),
-                        ],
+    Get.dialog(Dialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Select image',
+              style: TextStyle(fontSize: 20),
+            ),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxHeight: 0.7.sh),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    for (final path in assets)
+                      GestureDetector(
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          _processFile(await getAssetPath(path));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(path),
+                        ),
                       ),
-                    ),
-                  ),
-                  ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Cancel')),
-                ],
+                  ],
+                ),
               ),
             ),
-          );
-        });
+            ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Cancel')),
+          ],
+        ),
+      ),
+    ));
   }
 
   Future _processFile(String path) async {

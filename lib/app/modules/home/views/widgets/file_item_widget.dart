@@ -91,35 +91,42 @@ class FileItemWidget extends StatelessWidget {
           if(!file.isRemoved) Obx(() => !file.isExpanded() ? SizedBox.shrink() : Column(
               children: [
                 Row(
+                  spacing: 20.w,
                   children: [
-                    SubmitButton(
-                      height: 32,
-                      width: 96,
-                      bgColor: Clr.inputfieldColor,
-                      textColor: Clr.textColor,
-                      fontWeight: FontWeight.w400,
-                      textSize: 14,
-                      title: 'Share', 
-                      onTap: onShareTap == null ? null : () => onShareTap!(file),
+                    Expanded(
+                      child: SubmitButton(
+                        height: 32,
+                        width: double.infinity,
+                        bgColor: Clr.inputfieldColor,
+                        textColor: Clr.textColor,
+                        fontWeight: FontWeight.w400,
+                        textSize: 14,
+                        title: 'Share',
+                        onTap: onShareTap == null ? null : () => onShareTap!(file),
+                      ),
                     ),
-                    SubmitButton(
-                      height: 32,
-                      width: 96,
-                      bgColor: Clr.inputfieldColor,
-                      textColor: Clr.textColor,
-                      fontWeight: FontWeight.w400,
-                      textSize: 14,
-                      title: 'To Word', 
-                    ).paddingSymmetric(horizontal: 20.w),
-                    SubmitButton(
-                      height: 32,
-                      width: 96,
-                      bgColor: Clr.inputfieldColor,
-                      textColor: Clr.textColor,
-                      fontWeight: FontWeight.w400,
-                      textSize: 14,
-                      title: 'View', 
-                      onTap: onViewTap == null ? null : () => onViewTap!(file),
+                    if(onToWordTap != null) Expanded(
+                      child: SubmitButton(
+                        height: 32,
+                        width: double.infinity,
+                        bgColor: Clr.inputfieldColor,
+                        textColor: Clr.textColor,
+                        fontWeight: FontWeight.w400,
+                        textSize: 14,
+                        title: 'To Word',
+                      ),
+                    ),
+                    Expanded(
+                      child: SubmitButton(
+                        height: 32,
+                        width: double.infinity,
+                        bgColor: Clr.inputfieldColor,
+                        textColor: Clr.textColor,
+                        fontWeight: FontWeight.w400,
+                        textSize: 14,
+                        title: 'View',
+                        onTap: onViewTap == null ? null : () => onViewTap!(file),
+                      ),
                     ),
                     
                   ],

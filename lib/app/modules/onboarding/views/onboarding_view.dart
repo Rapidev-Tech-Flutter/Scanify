@@ -97,7 +97,7 @@ class OnboardingView extends GetView<OnboardingController> {
   }
 
 
-  buildInfoSection(Map<String,dynamic> data) {
+  Column buildInfoSection(Map<String,dynamic> data) {
     return Column(
       children: [
          Center(

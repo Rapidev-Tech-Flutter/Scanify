@@ -35,7 +35,7 @@ class AllScansView extends GetView<HomeController> {
     ) : buildView();
   }
 
-  buildView() {
+  Padding buildView() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 32.w),
       child: Column(
@@ -55,7 +55,7 @@ class AllScansView extends GetView<HomeController> {
                 if(controller.savedFiles.any((e) => e.isChecked())){
                   return Row(
                     children: [
-                      SizedBox(width: 46.w),
+                      SizedBox(width: 24.w),
                       GestureDetector(
                         onTap: controller.onMultipleDeleteTap,
                         child: Icon(
@@ -73,9 +73,6 @@ class AllScansView extends GetView<HomeController> {
                   return buildActionButtons();
                 }
               }),
-              
-              
-             
             ]
           ).paddingSymmetric(vertical: 24.h),
           if(!fromViewAll) Row(
@@ -111,11 +108,11 @@ class AllScansView extends GetView<HomeController> {
     );
   }
 
-  buildActionButtons() {
+  Row buildActionButtons() {
     return Row(
       children:[
-        SizedBox(width: 46.w),
-        SvgPicture.asset(AssetPath.addFileIcon).paddingOnly(right: 29.w),
+        SizedBox(width: 24.w),
+        // SvgPicture.asset(AssetPath.addFileIcon).paddingOnly(right: 29.w),
         GestureDetector(
           onTap: controller.onRefreshTap,
           child: SvgPicture.asset(AssetPath.refreshIcon),
@@ -124,7 +121,7 @@ class AllScansView extends GetView<HomeController> {
     );
   }
 
-  buildListView() {
+  Expanded buildListView() {
     final files = controller.searchController.text.isNotEmpty 
       ? controller.savedFiles.where((file) => file.fileName.toLowerCase().contains(controller.searchController.text.toLowerCase())).toList()
       : controller.savedFiles;
@@ -141,7 +138,7 @@ class AllScansView extends GetView<HomeController> {
           return FileItemWidget(
             file: file,
             onShareTap: controller.onSingleShareTap,
-            onToWordTap: controller.onToWordTap,
+            // onToWordTap: controller.onToWordTap,
             onViewTap: controller.onViewTap,
             onDeleteTap: controller.onSingleDeleteTap,
           );

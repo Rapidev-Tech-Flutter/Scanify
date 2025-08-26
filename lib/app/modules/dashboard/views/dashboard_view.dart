@@ -67,8 +67,7 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-
-  buildNavBarItem({required int index, required String label,required String icon}) {
+  Container buildNavBarItem({required int index, required String label,required String icon}) {
     bool isActive = index == controller.currentIndex;
     Color color = isActive ? Clr.selectedNavBarItemColor : Clr.unSelectedNavBarItemColor;
     return Container(
